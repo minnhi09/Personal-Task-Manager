@@ -1,0 +1,14 @@
+{
+  "name": "personal-task-manager",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@12.9.1",
+  "scripts": {
+    "dev": "pnpm --parallel --filter @ptm/api --filter @ptm/web dev",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm --filter @ptm/api test",
+    "db:migrate": "pnpm --filter @ptm/api db:migrate",
+    "db:reset": "pnpm --filter @ptm/api db:reset"
+  }
+}
