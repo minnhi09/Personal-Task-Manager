@@ -34,8 +34,11 @@ export function migrate(): void {
 export function resetDatabase(): void {
   const db = getDatabase();
   db.exec(`
+    DROP TABLE IF EXISTS calendar_item_overrides;
+    DROP TABLE IF EXISTS calendar_items;
     DROP TABLE IF EXISTS tasks;
     DROP TABLE IF EXISTS projects;
+    DROP TABLE IF EXISTS mobile_tokens;
     DROP TABLE IF EXISTS sessions;
     DROP TABLE IF EXISTS users;
     DROP TABLE IF EXISTS schema_migrations;

@@ -1,0 +1,9 @@
+[Unit]
+Description=Update Personal Task Manager DuckDNS record
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/personal-task-manager/duckdns.env
+ExecStart=/opt/personal-task-manager/deploy/duckdns/update-duckdns.sh

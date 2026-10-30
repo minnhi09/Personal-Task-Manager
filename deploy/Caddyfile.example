@@ -1,0 +1,14 @@
+# Copy to /etc/caddy/Caddyfile and replace the hostname and paths.
+tasks.example.duckdns.org {
+    encode gzip
+
+    handle /api/v1/* {
+        reverse_proxy 127.0.0.1:3001
+    }
+
+    handle {
+        root * /opt/personal-task-manager/apps/web/dist
+        try_files {path} /index.html
+        file_server
+    }
+}

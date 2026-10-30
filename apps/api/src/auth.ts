@@ -2,7 +2,17 @@ import argon2 from 'argon2';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 
 import { config } from './config.js';
-import { createSession, deleteExpiredSessions, deleteSession, findUserByEmail, findUserBySession } from './db/repository.js';
+import {
+  createMobileToken,
+  createSession,
+  deleteExpiredMobileTokens,
+  deleteExpiredSessions,
+  deleteSession,
+  findUserByEmail,
+  findUserByMobileToken,
+  findUserBySession,
+  revokeMobileToken
+} from './db/repository.js';
 import type { User } from './types.js';
 
 export async function hashPassword(password: string): Promise<string> {
@@ -37,12 +47,36 @@ export function createLoginSession(reply: FastifyReply, userId: string): void {
   setSessionCookie(reply, createSession(userId, expiresAt));
 }
 
+export function createMobileLoginToken(userId: string): { token: string; expiresAt: string } {
+  deleteExpiredMobileTokens();
+  const expiresAt = new Date(Date.now() + config.mobileTokenTtlDays * 86_400_000).toISOString();
+  return { token: createMobileToken(userId, expiresAt), expiresAt };
+}
+
+function bearerToken(request: FastifyRequest): string | undefined {
+  const authorization = request.headers.authorization;
+  if (!authorization?.startsWith('Bearer ')) return undefined;
+  const token = authorization.slice('Bearer '.length).trim();
+  return token || undefined;
+}
+
 export function readUser(request: FastifyRequest): User | undefined {
+  const token = bearerToken(request);
+  if (token) {
+    const user = findUserByMobileToken(token);
+    if (user) request.user = user;
+    return user;
+  }
   const sessionId = request.cookies[config.sessionCookieName];
   if (!sessionId) return undefined;
   const user = findUserBySession(sessionId);
   if (user) request.user = user;
   return user;
+}
+
+export function logoutMobile(request: FastifyRequest): void {
+  const token = bearerToken(request);
+  if (token) revokeMobileToken(token);
 }
 
 export function requireUser(request: FastifyRequest, reply: FastifyReply): User | undefined {

@@ -11,7 +11,7 @@ export function localDateInTimeZone(date: Date, timeZone: string): string {
   return `${values.year}-${values.month}-${values.day}`;
 }
 
-export function getDeadlineBucket(task: Pick<Task, 'deadlineType' | 'dueDate' | 'dueAt'>, now = new Date(), timeZone = 'Asia/Bangkok'): DeadlineBucket {
+export function getDeadlineBucket(task: Pick<Task, 'deadlineType' | 'dueDate' | 'dueAt'>, now = new Date(), timeZone = 'Asia/Ho_Chi_Minh'): DeadlineBucket {
   if (task.deadlineType === 'NONE') return 'NO_DEADLINE';
 
   if (task.deadlineType === 'DATE') {
@@ -36,17 +36,19 @@ export function normalizeDueAt(value: string): string {
   return parsed.toISOString();
 }
 
-export function formatDeadline(task: Pick<Task, 'deadlineType' | 'dueDate' | 'dueAt'>, timeZone = 'Asia/Bangkok'): string {
+export function formatDeadline(task: Pick<Task, 'deadlineType' | 'dueDate' | 'dueAt'>, timeZone = 'Asia/Ho_Chi_Minh'): string {
   if (task.deadlineType === 'NONE') return 'Không có hạn';
   if (task.deadlineType === 'DATE') {
     if (!task.dueDate) return 'Không có hạn';
-    return new Intl.DateTimeFormat('vi-VN', { timeZone, dateStyle: 'medium' }).format(new Date(`${task.dueDate}T12:00:00Z`));
+    // Date-only deadlines are calendar values. Formatting in UTC prevents a
+    // device/server offset from moving the displayed date to the previous day.
+    return new Intl.DateTimeFormat('vi-VN', { timeZone: 'UTC', dateStyle: 'medium' }).format(new Date(`${task.dueDate}T00:00:00Z`));
   }
   if (!task.dueAt) return 'Không có hạn';
   return new Intl.DateTimeFormat('vi-VN', { timeZone, dateStyle: 'medium', timeStyle: 'short' }).format(new Date(task.dueAt));
 }
 
-export function relativeDeadline(task: Pick<Task, 'deadlineType' | 'dueDate' | 'dueAt'>, now = new Date(), timeZone = 'Asia/Bangkok'): string {
+export function relativeDeadline(task: Pick<Task, 'deadlineType' | 'dueDate' | 'dueAt'>, now = new Date(), timeZone = 'Asia/Ho_Chi_Minh'): string {
   const bucket = getDeadlineBucket(task, now, timeZone);
   if (bucket === 'NO_DEADLINE') return 'Không có hạn';
   if (bucket === 'TODAY') return 'Hôm nay';

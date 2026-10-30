@@ -1,0 +1,10 @@
+{
+  "Rules": [
+    {
+      "ID": "expire-personal-task-manager-backups",
+      "Status": "Enabled",
+      "Filter": { "Prefix": "personal-task-manager/" },
+      "Expiration": { "Days": 30 }
+    }
+  ]
+}

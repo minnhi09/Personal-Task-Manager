@@ -7,6 +7,7 @@ import Fastify, { type FastifyInstance } from 'fastify';
 import { config } from './config.js';
 import { migrate } from './db/migrate.js';
 import { registerAuthRoutes } from './routes/auth.js';
+import { registerCalendarRoutes } from './routes/calendar.js';
 import { registerProjectRoutes } from './routes/projects.js';
 import { registerTaskRoutes } from './routes/tasks.js';
 
@@ -20,9 +21,19 @@ export async function buildApp(): Promise<FastifyInstance> {
     credentials: true
   });
 
+  app.addHook('onRequest', async (request, reply) => {
+    if (!['POST', 'PATCH', 'DELETE', 'PUT'].includes(request.method)) return;
+    const origin = request.headers.origin;
+    if (origin && origin !== config.webOrigin) {
+      reply.code(403).send({ error: { code: 'ORIGIN_FORBIDDEN', message: 'Nguồn yêu cầu không hợp lệ.' } });
+      return;
+    }
+  });
+
   app.get('/api/v1/health', async () => ({ ok: true }));
 
   await registerAuthRoutes(app);
+  await registerCalendarRoutes(app);
   await registerProjectRoutes(app);
   await registerTaskRoutes(app);
 

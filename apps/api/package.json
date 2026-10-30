@@ -9,7 +9,8 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "tsx --test test/**/*.test.ts",
     "db:migrate": "tsx src/db/cli.ts migrate",
-    "db:reset": "tsx src/db/cli.ts reset"
+    "db:reset": "tsx src/db/cli.ts reset",
+    "db:create-user": "tsx src/db/cli.ts create-user"
   },
   "dependencies": {
     "@fastify/cookie": "^11.0.2",

@@ -1,0 +1,12 @@
+[Unit]
+Description=Back up Personal Task Manager SQLite database to S3
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=ptm
+Environment=PTM_DATABASE_PATH=/var/lib/personal-task-manager/personal-task-manager.db
+Environment=PTM_S3_URI=s3://replace-with-private-bucket/personal-task-manager
+Environment=PTM_RETENTION_DAYS=30
+ExecStart=/opt/personal-task-manager/deploy/backup/backup-sqlite-to-s3.sh

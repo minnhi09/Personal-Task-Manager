@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Task Manager</string>
+    <string name="widget_description">Deadline công việc cá nhân</string>
+</resources>

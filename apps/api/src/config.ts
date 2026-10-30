@@ -26,6 +26,10 @@ export const config = {
   webOrigin: process.env.WEB_ORIGIN ?? 'http://localhost:5173',
   databasePath: path.resolve(projectRoot, process.env.DATABASE_PATH ?? './data/personal-task-manager.db'),
   sessionTtlDays: positiveInteger(process.env.SESSION_TTL_DAYS, 30),
+  mobileTokenTtlDays: positiveInteger(process.env.MOBILE_TOKEN_TTL_DAYS, 30),
   isProduction: process.env.NODE_ENV === 'production',
+  allowRegistration: process.env.ALLOW_REGISTRATION
+    ? process.env.ALLOW_REGISTRATION === 'true'
+    : process.env.NODE_ENV !== 'production',
   sessionCookieName: 'ptm_session'
 };

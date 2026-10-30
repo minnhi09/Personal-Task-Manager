@@ -1,0 +1,21 @@
+[Unit]
+Description=Personal Task Manager API
+After=network.target
+
+[Service]
+Type=simple
+User=ptm
+Group=ptm
+WorkingDirectory=/opt/personal-task-manager
+EnvironmentFile=/etc/personal-task-manager/api.env
+ExecStart=/usr/bin/node /opt/personal-task-manager/apps/api/dist/src/server.js
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths=/var/lib/personal-task-manager
+
+[Install]
+WantedBy=multi-user.target

@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 import { requireUser } from '../auth.js';
 import { formatDeadline, getDeadlineBucket, normalizeDueAt, relativeDeadline } from '../domain/deadline.js';
-import { createTask, deleteTask, listTasks, projectBelongsToUser, updateTask, type TaskValues } from '../db/repository.js';
+import { createTask, deleteTask, findTask, listTasks, projectBelongsToUser, updateTask, type TaskValues } from '../db/repository.js';
 import { badRequest, conflict, notFound } from '../http.js';
 import type { DeadlineType, Task, TaskPriority, TaskStatus } from '../types.js';
 
@@ -85,6 +85,22 @@ export async function registerTaskRoutes(app: FastifyInstance): Promise<void> {
       return leftDue.localeCompare(rightDue);
     });
     reply.send({ tasks });
+  });
+
+  app.get('/api/v1/tasks/:id', async (request, reply) => {
+    const user = requireUser(request, reply);
+    if (!user) return;
+    const params = paramsSchema.safeParse(request.params);
+    if (!params.success) {
+      badRequest(reply, 'Task id chưa hợp lệ.');
+      return;
+    }
+    const task = findTask(user.id, params.data.id);
+    if (!task) {
+      notFound(reply, 'Task không tồn tại.');
+      return;
+    }
+    reply.send({ task: presentTask(task, user.timezone) });
   });
 
   app.post('/api/v1/tasks', async (request, reply) => {

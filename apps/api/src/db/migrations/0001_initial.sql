@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS users (
   id TEXT PRIMARY KEY NOT NULL,
   email TEXT NOT NULL COLLATE NOCASE UNIQUE,
   password_hash TEXT NOT NULL,
-  timezone TEXT NOT NULL DEFAULT 'Asia/Bangkok',
+  timezone TEXT NOT NULL DEFAULT 'Asia/Ho_Chi_Minh',
   created_at TEXT NOT NULL
 );
 
@@ -22,6 +22,18 @@ CREATE TABLE IF NOT EXISTS sessions (
 
 CREATE INDEX IF NOT EXISTS sessions_user_id_idx ON sessions(user_id);
 CREATE INDEX IF NOT EXISTS sessions_expires_at_idx ON sessions(expires_at);
+
+CREATE TABLE IF NOT EXISTS mobile_tokens (
+  id TEXT PRIMARY KEY NOT NULL,
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  token_hash TEXT NOT NULL UNIQUE,
+  expires_at TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  revoked_at TEXT
+);
+
+CREATE INDEX IF NOT EXISTS mobile_tokens_user_id_idx ON mobile_tokens(user_id);
+CREATE INDEX IF NOT EXISTS mobile_tokens_expires_at_idx ON mobile_tokens(expires_at);
 
 CREATE TABLE IF NOT EXISTS projects (
   id TEXT PRIMARY KEY NOT NULL,

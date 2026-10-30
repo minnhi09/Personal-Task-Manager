@@ -2,6 +2,11 @@ export type TaskStatus = 'TODO' | 'IN_PROGRESS' | 'DONE';
 export type TaskPriority = 'LOW' | 'MEDIUM' | 'HIGH';
 export type DeadlineType = 'NONE' | 'DATE' | 'DATETIME';
 
+export type CalendarItemKind = 'TASK_BLOCK' | 'EVENT';
+export type CalendarDisplayKind = CalendarItemKind | 'DEADLINE';
+export type CalendarRecurrenceFrequency = 'NONE' | 'DAILY' | 'WEEKLY' | 'MONTHLY';
+export type CalendarEditScope = 'THIS' | 'SERIES';
+
 export type User = {
   id: string;
   email: string;
@@ -37,3 +42,30 @@ export type Task = {
 };
 
 export type DeadlineBucket = 'NO_DEADLINE' | 'OVERDUE' | 'TODAY' | 'UPCOMING';
+
+export type CalendarRecurrence = {
+  frequency: CalendarRecurrenceFrequency;
+  interval: number;
+  weekdays: number[];
+  until: string | null;
+};
+
+export type CalendarItem = {
+  id: string;
+  userId: string;
+  kind: CalendarDisplayKind;
+  taskId: string | null;
+  projectId: string | null;
+  title: string;
+  description: string | null;
+  start: string;
+  end: string;
+  allDay: boolean;
+  color: string | null;
+  recurrence: CalendarRecurrence | null;
+  seriesId: string;
+  occurrenceStart: string;
+  isOccurrence: boolean;
+  isOverride: boolean;
+  version: number;
+};
